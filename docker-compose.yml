@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: PRD_manager_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: prd_management
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - prd_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: PRD_manager_backend
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: admin
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: prd_management
+      JWT_SECRET: supersecretkey
+      UPLOAD_DIR: /data/prototypes
+    volumes:
+      - ./data/prototypes:/data/prototypes
+    depends_on:
+      - postgres
+    networks:
+      - prd_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: PRD_manager_frontend
+    ports:
+      - "${APP_PORT:-8081}:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./data/prototypes:/data/prototypes
+      - ./fonts:/fonts
+    networks:
+      - prd_network
+
+networks:
+  prd_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
