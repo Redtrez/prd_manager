@@ -56,5 +56,6 @@ docker-compose up -d --build
 
 ## Development
 
-- **Backend**: `cd backend && npm run start:dev` (Port 3000)
-- **Frontend**: `cd frontend && npm run dev` (Port 5173)
+- **Backend**: `cd backend && npm run start:dev` (Port 3000 - internal only)
+- **Frontend**: `cd frontend && npm run dev` (Port 5173 - internal only)
+- **Production**: Only the frontend port (8081 by default) is exposed externally for security

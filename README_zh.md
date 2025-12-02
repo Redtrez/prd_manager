@@ -68,5 +68,6 @@ APP_PORT=9090
 
 ## 开发
 
-- **后端**：`cd backend && npm run start:dev` (端口 3000)
-- **前端**：`cd frontend && npm run dev` (端口 5173)
+- **后端**：`cd backend && npm run start:dev` (端口 3000 - 仅内部访问)
+- **前端**：`cd frontend && npm run dev` (端口 5173 - 仅内部访问)
+- **生产环境**：出于安全考虑，仅前端端口（默认8081）对外暴露
