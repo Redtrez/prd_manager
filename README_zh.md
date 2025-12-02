@@ -1,5 +1,6 @@
 # 原型管理平台 (Prototype Management Platform)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [English](README.md) | [中文](README_zh.md)
 
 一个自托管的 Axure HTML 原型管理平台，具有用户认证、项目管理、版本控制和公告系统等功能。

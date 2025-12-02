@@ -10,7 +10,6 @@ build/
 
 # Local development and IDE files
 .trae/
-DEPLOYMENT_GUIDE.md
 
 # Data files (prototypes and user data)
 data/prototypes/*

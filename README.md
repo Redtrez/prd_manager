@@ -1,5 +1,6 @@
 # Prototype Management Platform
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [English](README.md) | [中文](README_zh.md)
 
 A self-hosted platform for managing Axure HTML prototypes, featuring user authentication, project management, version control, and announcements.
