@@ -7,6 +7,7 @@ A self-hosted platform for managing Axure HTML prototypes, featuring user authen
 ## Features
 
 - **Identity System**: User login/register, Admin/User roles.
+  - *Note*: The permission system is currently optimized for internal network usage where sharing direct links is sufficient. For production environments, additional security measures may be needed.
 - **Project Management**: Create, edit, delete projects with tags.
 - **Version Control**: Upload Axure HTML zip files, auto-unzip, and preview.
 - **Announcements**: Admin-managed announcements system.
@@ -38,7 +39,7 @@ docker-compose up -d --build
 
 ### Default Accounts
 
-- **Admin**: You can register a new account. The first registered user is NOT automatically admin. You may need to manually update the database role to `ADMIN` for the first user if you want to test admin features immediately, or modify the code to make the first user admin.
+- **Admin**: The first registered user is automatically set as administrator. Subsequent users have regular user permissions by default.
     - *Tip*: To make a user admin, access the postgres container:
       ```bash
       docker exec -it prd_postgres psql -U admin -d prd_management
