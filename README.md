@@ -22,6 +22,8 @@ A self-hosted platform for managing Axure HTML prototypes, featuring user authen
 
 ## Deployment
 
+Deployment Guide: [English](DEPLOYMENT_GUIDE.md) | [中文](DEPLOYMENT_GUIDE_zh.md)
+
 ### Prerequisites
 
 - Docker & Docker Compose installed.

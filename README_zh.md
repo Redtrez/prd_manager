@@ -22,7 +22,7 @@
 
 ## 部署指南
 
-详细部署说明请参考 [部署指南](deployment_guide.md)。
+详细部署说明： [中文](DEPLOYMENT_GUIDE_zh.md) | [English](DEPLOYMENT_GUIDE.md)
 
 ### 前置要求
 
