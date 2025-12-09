@@ -68,31 +68,57 @@ export class DesignVersionsService {
       throw new BadRequestException('Version already exists');
     }
 
-    // Unzip file
+    // Unzip file: prefer disk path, fallback to in-memory buffer for compatibility
+    const zipPath = (file as any)?.path as string | undefined;
     try {
-      const zip = new AdmZip(file.buffer);
+      fs.mkdirSync(versionPath, { recursive: true });
+      const zip = zipPath && fs.existsSync(zipPath)
+        ? new AdmZip(zipPath)
+        : file.buffer
+        ? new AdmZip(file.buffer)
+        : undefined;
+      if (!zip) {
+        throw new BadRequestException('Upload tmp file not found');
+      }
       zip.extractAllTo(versionPath, true);
       console.log('[DesignVersion] Successfully extracted to:', versionPath);
     } catch (error) {
       console.error('[DesignVersion] Failed to extract zip:', error);
       throw new BadRequestException('Invalid zip file');
+    } finally {
+      try {
+        if (zipPath && fs.existsSync(zipPath)) {
+          fs.unlinkSync(zipPath);
+        }
+      } catch {}
     }
 
-    // Auto-process fonts: replace Google Fonts with local fonts
-    try {
-      const processedCount = FontReplacer.processDirectory(versionPath);
-      console.log(
-        `[DesignVersion] Processed ${processedCount} files for font replacement`,
-      );
-    } catch (error) {
-      console.warn('[DesignVersion] Font replacement warning:', error);
-      // Don't block the upload process, just log the warning
+    const type = createDesignVersionDto.type ?? 'axure';
+
+    if (type === 'axure') {
+      try {
+        const processedCount = FontReplacer.processDirectory(versionPath);
+        console.log(
+          `[DesignVersion] Processed ${processedCount} files for font replacement`,
+        );
+      } catch (error) {
+        console.warn('[DesignVersion] Font replacement warning:', error);
+      }
     }
 
-    // Find entry file (index.html or start.html)
-    const entryFile = this.findEntryFile(versionPath);
-    if (!entryFile) {
-      throw new BadRequestException('No index.html or start.html found in zip file');
+    let entryFile: string | null = null;
+    if (type === 'axure') {
+      entryFile = this.findEntryFile(versionPath);
+      if (!entryFile) {
+        throw new BadRequestException('No index.html or start.html found in zip file');
+      }
+    } else {
+      const entry = (createDesignVersionDto.entry || 'index.html').trim();
+      const candidate = path.join(versionPath, entry);
+      if (!fs.existsSync(candidate) || !fs.statSync(candidate).isFile()) {
+        throw new BadRequestException('Entry file not found for HTML Demo');
+      }
+      entryFile = candidate;
     }
 
     // Calculate relative path for preview
@@ -109,6 +135,8 @@ export class DesignVersionsService {
       designId,
       version: createDesignVersionDto.version,
       path: previewPath,
+      type,
+      entry: type === 'html' ? (createDesignVersionDto.entry || 'index.html').trim() : null,
     });
 
     return this.designVersionsRepository.save(designVersion);

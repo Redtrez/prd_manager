@@ -7,12 +7,14 @@ A self-hosted platform for managing Axure HTML prototypes, featuring user authen
 
 ## Features
 
-- **Identity System**: User login/register, Admin/User roles.
-  - *Note*: The permission system is currently optimized for internal network usage where sharing direct links is sufficient. For production environments, additional security measures may be needed.
-- **Project Management**: Create, edit, delete projects with tags.
-- **Version Control**: Upload Axure HTML zip files, auto-unzip, and preview.
-- **Announcements**: Admin-managed announcements system.
-- **Deployment**: Docker Compose with Nginx reverse proxy.
+- **Identity System**: User login/register, Admin/User roles with comprehensive permission management.
+- **Project Management**: Create, edit, delete projects with tags and hierarchical organization.
+- **Version Control**: Support for both Axure HTML and custom HTML Demo uploads with auto-unzip and preview.
+- **Multi-format Support**: Upload Axure HTML zip files or custom HTML demos with configurable entry points.
+- **Announcements**: Admin-managed announcements system with rich text support.
+- **Deployment**: Docker Compose with Nginx reverse proxy for easy production deployment.
+- **Internationalization**: Full English and Chinese language support.
+- **Responsive Design**: Optimized for desktop and mobile devices.
 
 ## Tech Stack
 
@@ -48,6 +50,21 @@ docker-compose up -d --build
       docker exec -it prd_postgres psql -U admin -d prd_management
       UPDATE users SET role = 'ADMIN' WHERE username = 'your_username';
       ```
+
+### File Upload Types
+
+- **Axure HTML**: Upload Axure-generated zip files (auto-detected)
+- **HTML Demo**: Upload custom HTML projects with configurable entry points
+  - Supported entry files: `index.html`, `start.html`, or any custom HTML file
+  - Automatic font replacement for better compatibility
+
+### Production Deployment
+
+For production deployment, refer to the detailed [Deployment Guide](DEPLOYMENT_GUIDE.md) which includes:
+- Environment configuration
+- Database backup procedures
+- SSL certificate setup
+- Performance optimization tips
 
 ## Usage Guide
 

@@ -26,6 +26,7 @@ services:
       DATABASE_NAME: prd_management
       JWT_SECRET: supersecretkey
       UPLOAD_DIR: /data/prototypes
+      UPLOAD_TMP_DIR: /tmp
     volumes:
       - ./data/prototypes:/data/prototypes
     depends_on:

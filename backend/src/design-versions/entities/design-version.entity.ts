@@ -26,6 +26,12 @@ export class DesignVersion {
   @Column()
   path: string;
 
+  @Column({ default: 'axure' })
+  type: 'axure' | 'html';
+
+  @Column({ nullable: true })
+  entry: string;
+
   @CreateDateColumn()
   created_at: Date;
 }

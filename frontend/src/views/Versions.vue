@@ -13,6 +13,7 @@
 
     <el-table :data="versions" style="width: 100%" v-loading="loading">
       <el-table-column prop="version" :label="$t('versions.version')" width="150" />
+      <el-table-column prop="type" :label="$t('versions.type')" width="140" />
       <el-table-column prop="created_at" :label="$t('versions.uploadedAt')">
         <template #default="scope">
           {{ new Date(scope.row.created_at).toLocaleString() }}
@@ -30,6 +31,15 @@
       <el-form :model="form" label-width="100px">
         <el-form-item :label="$t('versions.version')" required>
           <el-input v-model="form.version" placeholder="e.g., v1.0.0" />
+        </el-form-item>
+        <el-form-item :label="$t('versions.type')" required>
+          <el-select v-model="form.type" style="width: 100%">
+            <el-option :label="$t('versions.typeAxure')" value="axure" />
+            <el-option :label="$t('versions.typeHtml')" value="html" />
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="form.type === 'html'" :label="$t('versions.entry')">
+          <el-input v-model="form.entry" placeholder="index.html" />
         </el-form-item>
         <el-form-item :label="$t('versions.zipFile')" required>
           <el-upload
@@ -83,7 +93,9 @@ const uploading = ref(false)
 const fileList = ref<any[]>([])
 
 const form = reactive({
-  version: ''
+  version: '',
+  type: 'axure',
+  entry: ''
 })
 
 const fetchVersions = async () => {
@@ -111,6 +123,10 @@ const handleUpload = async () => {
   uploading.value = true
   const formData = new FormData()
   formData.append('version', form.version)
+  formData.append('type', form.type)
+  if (form.type === 'html') {
+    formData.append('entry', (form.entry && form.entry.trim()) || 'index.html')
+  }
   const f = fileList.value[0]
   formData.append('file', (f && (f.raw ?? f)) as Blob)
 
@@ -124,7 +140,8 @@ const handleUpload = async () => {
     dialogVisible.value = false
     fetchVersions()
   } catch (error) {
-    ElMessage.error(t('common.failed'))
+    const msg = (error && (error as any).response && (error as any).response.data && (error as any).response.data.message) || t('common.failed')
+    ElMessage.error(Array.isArray(msg) ? msg.join(', ') : msg)
   } finally {
     uploading.value = false
   }
@@ -148,6 +165,10 @@ const handleDelete = (row: any) => {
 
 const handlePreview = (row: any) => {
   if (row.path) {
+    if (row.type === 'html') {
+      window.open(row.path, '_blank')
+      return
+    }
     const previewUrl = `/preview?url=${encodeURIComponent(row.path)}&title=${encodeURIComponent(row.version)}`
     window.open(previewUrl, '_blank')
   } else {

@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
+import { diskStorage } from 'multer';
+import * as os from 'os';
+import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './users/entities/user.entity';
@@ -24,9 +26,21 @@ import { Announcement } from './announcements/entities/announcement.entity';
   imports: [
     ConfigModule.forRoot(),
     MulterModule.register({
-      storage: memoryStorage(),
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const tmpDir = process.env.UPLOAD_TMP_DIR || os.tmpdir();
+          cb(null, tmpDir);
+        },
+        filename: (req, file, cb) => {
+          // keep extension, randomize name
+          const ext = path.extname(file.originalname || '') || '.zip';
+          const name = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
+          cb(null, name);
+        },
+      }),
       limits: {
         fileSize: 100 * 1024 * 1024, // 100MB
+        files: 1,
       },
     }),
     TypeOrmModule.forRootAsync({
